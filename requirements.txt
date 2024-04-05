@@ -1,0 +1,21 @@
+# Usage: pip install -r requirements.txt
+
+# Base ----------------------------------------
+numpy==1.26.4=pypi_0
+torch==2.1.0=pypi_0
+torchvision==0.16.0=pypi_0
+pillow==9.4.0=py311h6a678d5_0
+opencv-python==4.8.1.78=pypi_0
+matplotlib==3.7.1=py311h06a4308_1
+scikit-image==0.22.0=pypi_0
+
+# Extras --------------------------------------
+diffusers==0.14.0=pypi_0
+transformers==4.29.2=py311h06a4308_0
+xformers==0.0.22.post7=pypi_0
+huggingface-hub==0.16.4=pypi_0
+opencv-contrib-python==4.8.1.78=pypi_0
+controlnet_aux
+ipywidgets==8.0.4=py311h06a4308_0
+git+https://github.com/huggingface/accelerate.git
+git+https://github.com/huggingface/diffusers
