@@ -1,7 +1,6 @@
 '''
 BCGen Pipeline
 Created on March 25, 2024
-Last Update: April 1, 2024
 Authors: Sina Davari, Ali Tohidifar
 This code is for utilizing ControlNet to generate more realistic synthtic images.
 '''
@@ -14,51 +13,64 @@ import numpy as np
 from PIL import Image
 from pathlib import Path
 from diffusers import LMSDiscreteScheduler, DDIMScheduler,DPMSolverMultistepScheduler, EulerDiscreteScheduler,PNDMScheduler,DDPMScheduler, EulerAncestralDiscreteScheduler, UniPCMultistepScheduler
-from diffusers import ControlNetModel, StableDiffusionControlNetImg2ImgPipeline
+from diffusers import ControlNetModel, StableDiffusionControlNetImg2ImgPipeline, StableDiffusionXLControlNetImg2ImgPipeline, AutoencoderKL
 from utils import colorize_mask, avatarcutpaster
 
 # Set up logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def bcgen(
-        base_dataset_path='/home/sina/Downloads/Synthetic_Dataset_test',
+        base_dataset_path='/home/sina/Downloads/controlnet_p/ValueOfRealism/PythonCodes/synthetic/old',
         output_base_folder = './generated',
         output_img_size = (1280, 1280),
-        num_inference_steps = 3, #80, # default = 50. The number of denoising steps
+        num_inference_steps = 70, #80, # default = 50. The number of denoising steps
         controlnet_conditioning_scale =  [0.8, 0.8], # depth weight, segmentation weight 
         img_strength = 0.9,
-        CFG = 12.5, # default = 7.5 — The higher CFG, more dependence on the text prompt at the expense of lower img quality.
-        prompt = "a high quality, high resolution image of a construction site",
-        n_prompts = "blurry, blurred, ugly, bad anatomy, low quality",
+        CFG = 13, # default = 7.5 — The higher CFG, more dependence on the text prompt at the expense of lower img quality.
+        prompt = "a high quality, high resolution image of a construction site", #"a photorealistic, high quality, and high resolution image of a construction site, highlighting the textures of materials, such as steel, concrete, and dirt, dynamic shadows and vibrant, realistic colors",
+        n_prompts = "blurry, blurred, ugly, bad anatomy, bad quality, low quality", #"blurry, blurred, ugly, bad anatomy, low quality, abstract, too complex, too chaotic, unrealistic",
         cutpaste = True,
+        usexl = True,
         ):
     
     logging.info("\nStarting BCGen Pipeline...\n")
-    seed_num = 42
 
     # Instantiate ControlNet
-    controlnet = [
-                ControlNetModel.from_pretrained("lllyasviel/sd-controlnet-depth", torch_dtype=torch.float16),
-                ControlNetModel.from_pretrained("lllyasviel/sd-controlnet-seg", torch_dtype=torch.float16),
-                ]
+    if usexl:
+        controlnet = [
+            ControlNetModel.from_pretrained("diffusers/controlnet-depth-sdxl-1.0", variant="fp16", use_safetensors=True, torch_dtype=torch.float16).to("cuda"),
+            ControlNetModel.from_pretrained("SargeZT/sdxl-controlnet-seg", torch_dtype=torch.float16).to("cuda"),
+            ]
+        
+        vae = AutoencoderKL.from_pretrained("stabilityai/sdxl-vae", torch_dtype=torch.float16).to("cuda")
 
-    # other options:
-    # ControlNetModel.from_pretrained("lllyasviel/sd-controlnet-openpose", torch_dtype=torch.float16),
-    # ControlNetModel.from_pretrained("lllyasviel/sd-controlnet-canny", torch_dtype=torch.float16),
+        pipe = StableDiffusionXLControlNetImg2ImgPipeline.from_pretrained(
+            "stabilityai/stable-diffusion-xl-base-1.0",
+            controlnet=controlnet,
+            vae=vae,
+            variant="fp16",
+            use_safetensors=True,
+            torch_dtype=torch.float16
+        ).to("cuda")
 
-    pipe =  StableDiffusionControlNetImg2ImgPipeline.from_pretrained(
-        "runwayml/stable-diffusion-v1-5",
-        controlnet=controlnet,
-        safety_checker=None,
-        torch_dtype=torch.float16
-    )
+    else:
+        controlnet = [
+            ControlNetModel.from_pretrained("lllyasviel/sd-controlnet-depth", torch_dtype=torch.float16),
+            ControlNetModel.from_pretrained("lllyasviel/sd-controlnet-seg", torch_dtype=torch.float16),
+            ]
+
+        pipe = StableDiffusionControlNetImg2ImgPipeline.from_pretrained(
+            "runwayml/stable-diffusion-v1-5",
+            controlnet=controlnet,
+            safety_checker=None,
+            torch_dtype=torch.float16
+        )
 
     pipe.scheduler = UniPCMultistepScheduler.from_config(pipe.scheduler.config)
     pipe.enable_model_cpu_offload()
 
     # Generate data and save it to the folders
-    generator = torch.Generator(device="cpu").manual_seed(seed_num)
-
+    generator = torch.Generator(device="cpu").manual_seed(42)
 
     # Convert string paths to Path objects
     base_dataset_path = Path(base_dataset_path)
@@ -117,19 +129,18 @@ def bcgen(
                 negative_prompt = n_prompts,
                 control_image = condition_image,
                 image = image,
-                height = output_img_size[0],
-                width = output_img_size[1],
                 guidance_scale = CFG,
                 strength = img_strength,
                 num_inference_steps=num_inference_steps,
                 generator=generator,
                 controlnet_conditioning_scale = controlnet_conditioning_scale,
-                cutpaste = True
             ).images[0]
             
             # Save the image with a unique filename
             out_img_path = folder_path_with_timestamp / img
             out_image.save(out_img_path)
+
+            torch.cuda.empty_cache()
 
         # Avatar Cut and Paste
         if cutpaste:
