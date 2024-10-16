@@ -12,7 +12,7 @@ import datetime
 import numpy as np
 from PIL import Image
 from pathlib import Path
-from diffusers import LMSDiscreteScheduler, DDIMScheduler,DPMSolverMultistepScheduler, EulerDiscreteScheduler,PNDMScheduler,DDPMScheduler, EulerAncestralDiscreteScheduler, UniPCMultistepScheduler
+from diffusers import DDIMScheduler#, UniPCMultistepScheduler
 from diffusers import ControlNetModel, StableDiffusionControlNetImg2ImgPipeline, StableDiffusionXLControlNetImg2ImgPipeline, AutoencoderKL
 from utils import colorize_mask, avatarcutpaster
 
@@ -20,17 +20,19 @@ from utils import colorize_mask, avatarcutpaster
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def bcgen(
-        base_dataset_path='/home/sina/Downloads/controlnet_p/ValueOfRealism/PythonCodes/synthetic/old',
+        base_dataset_path='/home/sina/Downloads/Ali_Paper_Datasets/SynthDataTemp_instance7/Dataset',
         output_base_folder = './generated',
         output_img_size = (1280, 1280),
-        num_inference_steps = 70, #80, # default = 50. The number of denoising steps
-        controlnet_conditioning_scale =  [0.8, 0.8], # depth weight, segmentation weight 
-        img_strength = 0.9,
-        CFG = 13, # default = 7.5 — The higher CFG, more dependence on the text prompt at the expense of lower img quality.
-        prompt = "a high quality, high resolution image of a construction site", #"a photorealistic, high quality, and high resolution image of a construction site, highlighting the textures of materials, such as steel, concrete, and dirt, dynamic shadows and vibrant, realistic colors",
-        n_prompts = "blurry, blurred, ugly, bad anatomy, bad quality, low quality", #"blurry, blurred, ugly, bad anatomy, low quality, abstract, too complex, too chaotic, unrealistic",
+        num_inference_steps = 50, # default = 50. The number of denoising steps
+        controlnet_conditioning_scale = [0.9, 0.9], # depth weight, segmentation weight 
+        img_strength = 1,
+        CFG = 12, # default = 7.5 — The higher CFG, more dependence on the text prompt at the expense of lower img quality.
+        prompt = "a high quality, high resolution image of a construction site",
+        n_prompts = "blurry, blurred, ugly, bad anatomy, bad quality, low quality",
+        solver = DDIMScheduler,
         cutpaste = True,
         usexl = True,
+        gridsearch = False,
         ):
     
     logging.info("\nStarting BCGen Pipeline...\n")
@@ -66,7 +68,7 @@ def bcgen(
             torch_dtype=torch.float16
         )
 
-    pipe.scheduler = UniPCMultistepScheduler.from_config(pipe.scheduler.config)
+    pipe.scheduler = solver.from_config(pipe.scheduler.config)
     pipe.enable_model_cpu_offload()
 
     # Generate data and save it to the folders
@@ -99,11 +101,11 @@ def bcgen(
 
             # load image
             image = Image.open(img_dir)
-            image = image.resize(output_img_size, Image.ANTIALIAS)
+            image = image.resize(output_img_size, Image.LANCZOS)
             controlnet_input_images.append((img_path.name, image))
 
             # load depth and reverse it
-            depth_image = Image.fromarray(255 - cv2.imread(str(depth_dir), cv2.IMREAD_UNCHANGED)).resize(output_img_size, Image.ANTIALIAS)
+            depth_image = Image.fromarray(255 - cv2.imread(str(depth_dir), cv2.IMREAD_UNCHANGED)).resize(output_img_size, Image.LANCZOS)
             
             # load mask
             mask_image = Image.open(mask_dir)
@@ -111,13 +113,18 @@ def bcgen(
             if mask.ndim == 3: mask = mask[:, :, 0]
             
             # preprocess the masks
-            mask_image = Image.fromarray(colorize_mask(mask)).resize(output_img_size, Image.ANTIALIAS)
+            mask_image = Image.fromarray(colorize_mask(mask)).resize(output_img_size, Image.LANCZOS)
             
             # add conditions to the list
             controlnet_conditions.append([depth_image, mask_image])
 
-        folder_path = output_base_folder / img_seq_folder.name
-        # print('\nProcessing folder "', folder_path, '"')
+        ##### For Grid Search #####
+        if gridsearch:
+            folder_name = f"Steps_{num_inference_steps}-Cond_Scale_{controlnet_conditioning_scale[0]}_{controlnet_conditioning_scale[1]}-Strength_{img_strength}-CFG_{CFG}-Solver_{solver.__name__}_"
+            folder_path = output_base_folder / Path(folder_name + img_seq_folder.name)
+        else:
+            folder_path = output_base_folder / img_seq_folder.name
+        
         logging.info(f'\nProcessing folder: {folder_path}')
         folder_path_with_timestamp = Path(str(folder_path) + timestamp)
         folder_path_with_timestamp.mkdir(parents=True, exist_ok=True)
@@ -131,9 +138,10 @@ def bcgen(
                 image = image,
                 guidance_scale = CFG,
                 strength = img_strength,
-                num_inference_steps=num_inference_steps,
-                generator=generator,
+                num_inference_steps = num_inference_steps,
+                generator = generator,
                 controlnet_conditioning_scale = controlnet_conditioning_scale,
+                solver = solver,
             ).images[0]
             
             # Save the image with a unique filename
@@ -144,7 +152,7 @@ def bcgen(
 
         # Avatar Cut and Paste
         if cutpaste:
-            avatarcutpaster(Path.cwd() / input_image_folder / img_seq_folder, Path.cwd(), output_img_size, timestamp)
+            avatarcutpaster(Path.cwd() / input_image_folder / img_seq_folder, Path.cwd(), folder_path_with_timestamp, output_img_size, timestamp)
         
     logging.info("\nBCGen Pipeline executed successfully.")
 
