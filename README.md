@@ -49,9 +49,22 @@ To run the BCon enhancement process:
 ## Dataset
 We provide sample datasets for testing and experimentation:
 
-* Sample Enhanced Images: 50 BCon-enhanced images along with their corresponding BlendCon images, depth maps, and semantic masks are available in the Datasets folder.
+* Sample Enhanced Images: 100 random BCon-enhanced images along with their corresponding BlendCon images, depth maps, and semantic masks are available in the Datasets folder.
 
-* Scraped Test Dataset: The scraped real-world test dataset used for evaluation is provided in the Datasets folder.
+* Scraped Test Dataset (TorCon_Test): The scraped real-world test dataset used for evaluation is provided in the Datasets folder.
+
+* Folder structure:
+bcon/
+└── Datasets/
+    ├── BlendCon_Samples/
+    │   ├── depths/
+    │   ├── imgs/
+    │   ├── labels/
+    │   └── masks/
+    ├── BCon_Samples/
+    └── TorCon_Test/
+        ├── imgs/
+        └── labels/
 
 ## Results
 The object detection results, tested on the scraped test dataset, are summarized below:
