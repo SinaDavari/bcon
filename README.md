@@ -1,4 +1,4 @@
-# bcgen
+# BCon
 The repository for utilizing ControlNet to generate more realistic and diverse synthetic images.
 
 ## Guide for Installation and Setting Up Environment
