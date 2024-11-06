@@ -1,8 +1,9 @@
 '''
-BCGen Pipeline
+BCon Pipeline
 Created on March 25, 2024
+Last Update: November 6, 2024
 Authors: Sina Davari, Ali Tohidifar
-This code is for utilizing ControlNet to generate more realistic synthtic images.
+Please see https://github.com/SinaDavari/bcon for more information.
 '''
 # Libraries
 import cv2
@@ -12,21 +13,21 @@ import datetime
 import numpy as np
 from PIL import Image
 from pathlib import Path
-from diffusers import DDIMScheduler#, UniPCMultistepScheduler
+from diffusers import DDIMScheduler
 from diffusers import ControlNetModel, StableDiffusionControlNetImg2ImgPipeline, StableDiffusionXLControlNetImg2ImgPipeline, AutoencoderKL
 from utils import colorize_mask, avatarcutpaster
 
 # Set up logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-def bcgen(
+def bcon(
         base_dataset_path='/home/sina/Downloads/Ali_Paper_Datasets/SynthDataTemp_instance7/Dataset',
         output_base_folder = './generated',
         output_img_size = (1280, 1280),
-        num_inference_steps = 50, # default = 50. The number of denoising steps
+        num_inference_steps = 50,
         controlnet_conditioning_scale = [0.9, 0.9], # depth weight, segmentation weight 
         img_strength = 1,
-        CFG = 12, # default = 7.5 — The higher CFG, more dependence on the text prompt at the expense of lower img quality.
+        CFG = 12, # The higher CFG, more dependence on the text prompt at the expense of lower img quality.
         prompt = "a high quality, high resolution image of a construction site",
         n_prompts = "blurry, blurred, ugly, bad anatomy, bad quality, low quality",
         solver = DDIMScheduler,
@@ -35,7 +36,7 @@ def bcgen(
         gridsearch = False,
         ):
     
-    logging.info("\nStarting BCGen Pipeline...\n")
+    logging.info("\nStarting BCon Pipeline...\n")
 
     # Instantiate ControlNet
     if usexl:
@@ -154,7 +155,7 @@ def bcgen(
         if cutpaste:
             avatarcutpaster(Path.cwd() / input_image_folder / img_seq_folder, Path.cwd(), folder_path_with_timestamp, output_img_size, timestamp)
         
-    logging.info("\nBCGen Pipeline executed successfully.")
+    logging.info("\nBCon Pipeline executed successfully.")
 
 if __name__ == "__main__":
-    bcgen()
+    bcon()
