@@ -53,19 +53,19 @@ We provide sample datasets for testing and experimentation:
 
 * Scraped Test Dataset (TorCon_Test): The scraped real-world test dataset used for evaluation is provided in the Datasets folder.
 
-* Folder structure:
-bcon/
-└── Datasets/
-    ├── BlendCon_Samples/
-    │   ├── depths/
-    │   ├── imgs/
-    │   ├── labels/
-    │   └── masks/
-    ├── BCon_Samples/
-    └── TorCon_Test/
-        ├── imgs/
-        └── labels/
-
+* Datasets folder structure is as follows:
+   ```
+   bcon/
+   └── Datasets/
+       ├── BlendCon_Samples/
+       │   ├── depths/
+       │   ├── imgs/
+       │   ├── labels/
+       │   └── masks/
+       ├── BCon_Samples/
+       └── TorCon_Test/
+           ├── imgs/
+           └── labels/
 ## Results
 The object detection results, tested on the scraped test dataset, are summarized below:
 
