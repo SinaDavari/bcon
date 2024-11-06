@@ -9,12 +9,12 @@ If you prefer to create the environment using the provided environment.yaml file
 1. Create the Environment from the YAML File:
 
 ```sh
-conda env create -f environment.yaml
+   conda env create -f environment.yaml
 
 2. Activate the Environment:
 
 ```sh
-conda activate bcon
+   conda activate bcon
 
 
 
