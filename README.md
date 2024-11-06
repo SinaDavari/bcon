@@ -70,6 +70,8 @@ We provide sample datasets for testing and experimentation:
 ## Results
 The object detection results, tested on the scraped test dataset, are summarized below:
 
+<div align="center">
+   
 | Dataset            | # Images | # Instances | AP<sub>50–95</sub> (%) |
 |--------------------|----------|-------------|------------------------|
 | BlendCon Filtered  | 25,600   | 43,000      | 60.9                   |
@@ -78,6 +80,8 @@ The object detection results, tested on the scraped test dataset, are summarized
 | BCon Full          | 40,000   | 70,900      | 61.5                   |
 | Real SODA + MOCS   | 21,000   | 70,900      | 68.5                   |
 | Real Sampled       | 12,800   | 43,000      | 65.6                   |
+
+</div>
 
 These results demonstrate the effectiveness of the BCon framework in improving object detection performance on synthetic data.
 
