@@ -21,8 +21,8 @@ from utils import colorize_mask, avatarcutpaster
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def bcon(
-        base_dataset_path='/home/sina/Downloads/Ali_Paper_Datasets/SynthDataTemp_instance7/Dataset',
-        output_base_folder = './generated',
+        base_dataset_path='Path_to_the_synthetic_dataset',
+        output_base_folder = 'Path_to_the_generated_dataset',
         output_img_size = (1280, 1280),
         num_inference_steps = 50,
         controlnet_conditioning_scale = [0.9, 0.9], # depth weight, segmentation weight 
