@@ -74,12 +74,9 @@ The object detection results, tested on the scraped test dataset, are summarized
    
 | Dataset            | # Images | # Instances | AP<sub>50–95</sub> (%) |
 |--------------------|----------|-------------|------------------------|
-| BlendCon Filtered  | 25,600   | 43,000      | 60.9                   |
-| BlendCon Full      | 40,000   | 70,900      | 57.6                   |
-| BCon Filtered      | 25,600   | 43,000      | 65.7                   |
-| BCon Full          | 40,000   | 70,900      | 61.5                   |
-| Real SODA + MOCS   | 21,000   | 70,900      | 68.5                   |
-| Real Sampled       | 12,800   | 43,000      | 65.6                   |
+| BlendCon           | 25,600   | 43,000      | 60.9                   |
+| BCon               | 25,600   | 43,000      | 65.7                   |
+| Real SODA + MOCS   | 12,800   | 43,000      | 65.6                   |
 
 </div>
 
