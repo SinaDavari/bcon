@@ -1,4 +1,5 @@
 # BCon: ControlNet-Based Domain Adaptation of Synthetic Construction Images
+![Alt text for image 1](Media/bcon_pipeline.png)
 
 BCon is a domain adaptation framework that enhances the realism and diversity of synthetic construction images using ControlNet with Stable Diffusion XL, while preserving full annotations essential for training deep neural networks (DNNs). This approach effectively bridges the domain gap inherent in synthetic data, reducing reliance on costly real-world data collection and annotation.
 
@@ -69,16 +70,19 @@ We provide sample datasets for testing and experimentation:
 ## Results
 The object detection results, tested on the scraped test dataset, are summarized below:
 
+<div align="center">
+   
 | Dataset            | # Images | # Instances | AP<sub>50–95</sub> (%) |
 |--------------------|----------|-------------|------------------------|
-| BlendCon Filtered  | 25,600   | 43,000      | 60.9                   |
-| BlendCon Full      | 40,000   | 70,900      | 57.6                   |
-| BCon Filtered      | 25,600   | 43,000      | 65.7                   |
-| BCon Full          | 40,000   | 70,900      | 61.5                   |
-| Real SODA + MOCS   | 21,000   | 70,900      | 68.5                   |
-| Real Sampled       | 12,800   | 43,000      | 65.6                   |
+| BlendCon           | 25,600   | 43,000      | 60.9                   |
+| BCon               | 25,600   | 43,000      | 65.7                   |
+| Real SODA + MOCS   | 12,800   | 43,000      | 65.6                   |
+
+</div>
 
 These results demonstrate the effectiveness of the BCon framework in improving object detection performance on synthetic data.
+
+![Alt text for image 2](Media/visual_examples.png)
 
 ## Contributing
 We welcome contributions from the community. If you'd like to contribute, please follow these steps:
