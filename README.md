@@ -95,9 +95,9 @@ We welcome contributions from the community. If you'd like to contribute, please
 ## Citation
 If you use this code or dataset in your research, please cite our paper:
 ```bibtex
-@article{BCon2024,
+@article{BCon2025,
   title={BCon: ControlNet-Based Domain Adaptation of Synthetic Construction Images},
   author={Sina Davari, Daeho Kim, and Ali Tohidifar},
   journal={TBA},
-  year={2024}
+  year={2025}
 }
