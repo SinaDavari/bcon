@@ -52,7 +52,9 @@ We provide sample datasets for testing and experimentation:
 
 * Sample Enhanced Images: 100 random BCon-enhanced images along with their corresponding BlendCon images, depth maps, and semantic masks are available in the Datasets folder.
 
-* Scraped Test Dataset (TorCon_Test): The scraped real-world test dataset used for evaluation is provided in the Datasets folder.
+* Scraped Test Dataset (Scraped_Test_Set): Our test dataset, consisting of 1,257 scraped real-world construction site images used for evaluation, is included in the Datasets folder.
+
+* Sample datasets are available at: https://drive.google.com/drive/folders/13ZFP9vP5LWqvBlwDvovzZrwfNicsesSi?usp=sharing 
 
 * Datasets folder structure is as follows:
    ```
@@ -64,9 +66,10 @@ We provide sample datasets for testing and experimentation:
        │   ├── labels/
        │   └── masks/
        ├── BCon_Samples/
-       └── TorCon_Test/
+       └── Scraped_Test_Set/
            ├── imgs/
            └── labels/
+
 ## Results
 The object detection results, tested on the scraped test dataset, are summarized below:
 
@@ -96,8 +99,8 @@ We welcome contributions from the community. If you'd like to contribute, please
 If you use this code or dataset in your research, please cite our paper:
 ```bibtex
 @article{BCon2025,
-  title={BCon: ControlNet-Based Domain Adaptation of Synthetic Construction Images},
+  title={ControlNet-Based Domain Adaptation for Synthetic Construction Images via Graphical Simulation and Generative AI},
   author={Sina Davari, Daeho Kim, and Ali Tohidifar},
-  journal={TBA},
+  journal={Automation in Construction},
   year={2025}
 }
